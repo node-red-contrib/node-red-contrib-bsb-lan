@@ -1,0 +1,51 @@
+<html type="text/x-red" data-template-name="mikrotik">
+<div class="form-row">
+    <label for="node-input-device"><i class="fa fa-server"></i> Device</label>
+    <select id="node-input-device"></select>
+</div>
+
+<div class="form-row" id="node-input-command-row" >
+    <label for="node-input-command">Command</label>
+    <input type="text" id="node-input-command">
+    <input type="hidden" id="node-input-command-type">
+</div>
+
+<div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name" class="paletteLabel" placeholder="Name">
+</div>
+  
+<div class="form-tips">
+    TODO <code>msg.payload</code> or <code>msg.command</code><br><br>
+</div>  
+</html>
+
+<html type="text/x-red" data-help-name="mikrotik">
+<p>A node that connect with BSB-LAN via the
+    <a href="https://github.com/fredlcore/bsb_lan" target="_blank">BSB-LAN API</a>.
+</p>
+
+<h3>Configuration</h3>
+<b>Device:</b> Setup BSB-LAN settings like host, port (8278 - default), username and pass or key.<br><br>
+
+<h3>Output</h3>
+<dl class="message-properties">
+    <dt>payload <span class="property-type">object</span> </dt>
+    <dd>The output/result of the executed command on the BSB-LAN device.</dd>
+</dl>
+
+<h3>Input</h3>
+<dl class="message-properties">
+    <dt class="optional">payload / command<span class="property-type">object</span></dt>
+    <dd>This override the executed command.</dd>
+    <dt class="option">user<span class="property-type">string</span></dt>
+    <dd>This overrides the username.</dd>
+    <dt class="option">password<span class="property-type">string</span></dt>
+    <dd>This overrides the password.</dd>
+    <dt class="option">host<span class="property-type">string</span></dt>
+    <dd>This overrides the host.</dd>
+    <dt class="option">port<span class="property-type">number</span></dt>
+    <dd>This overrides the port.</dd>
+</dl>
+
+</html>
