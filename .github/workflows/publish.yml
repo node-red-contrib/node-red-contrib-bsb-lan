@@ -44,27 +44,3 @@ jobs:
         asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.tgz
         asset_content_type: application/zip
 
-
-    - name: Update package.json for NameWith2
-      uses: jossef/action-set-json-field@v1
-      with:
-        file: package.json
-        field: name
-        value: ${{ github.event.repository.name }}2
-  
-    - name: pack
-      run:  |
-        ls -al
-        rm -f .npmrc
-        npm pack
-
-    - name: Update package.json for NameWith3
-      uses: jossef/action-set-json-field@v1
-      with:
-        file: package.json
-        field: name
-        value: ${{ github.event.repository.name }}3
-  
-    - name: pack
-      run:  |
-        npm pack        
