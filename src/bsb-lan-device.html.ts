@@ -1,8 +1,7 @@
 import { EditorRED, EditorNodeDef } from "node-red";
 declare var RED: EditorRED;
-import { Credentials, MikrotikDeviceConfig } from "node-red-contrib-bsb-lan/src/interfaces";
 
-RED.nodes.registerType('mikrotik-device', {
+RED.nodes.registerType('bsb-lan-device', {
     category: 'config',
     defaults: {
         host: { value: '192.168.0.1', required: true },
@@ -16,7 +15,5 @@ RED.nodes.registerType('mikrotik-device', {
         password: { type: "password" },
         key: { type: "password" }
     },
-   
-
 } as EditorNodeDef<any, any,  { credentials: any, host: string, port: string }>);
 
