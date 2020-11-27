@@ -1,6 +1,8 @@
 import { EditorRED, EditorNodeDef } from "node-red";
 declare var RED: EditorRED;
 
+import { Credentials } from "./interfaces";
+
 RED.nodes.registerType('bsb-lan-device', {
     category: 'config',
     defaults: {
@@ -15,5 +17,5 @@ RED.nodes.registerType('bsb-lan-device', {
         password: { type: "password" },
         key: { type: "password" }
     },
-} as EditorNodeDef<any, any,  { credentials: any, host: string, port: string }>);
+} as EditorNodeDef<any, any,  { credentials: Credentials, host: string, port: string }>);
 
