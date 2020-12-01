@@ -7,6 +7,7 @@ RED.nodes.registerType('bsb-lan', {
     defaults: {
         device: { value: '', type: "bsb-lan-device" },
         name: { value: '' },
+        requesttype: { value: 'GET' },
         values: { value: [] },
     },
     inputs: 1,
@@ -28,10 +29,9 @@ RED.nodes.registerType('bsb-lan', {
             .appendTo(".node-input-browse-row");
         treeList.treeList({});
 
-        function loadData(id: string) {
+        function loadData(id: string, get: boolean) {
             treeList.treeList('empty');
             let fetchPath = 'bsb-lan/' + id + '/JK=';
-            console.log(fetchPath);
             $.getJSON(fetchPath + 'ALL', function (data) {
                 let i = 0;
                 let tree = [];
@@ -41,18 +41,24 @@ RED.nodes.registerType('bsb-lan', {
 
                     let leaf = {
                         label: item.name + ' (' + item.min + '-' + item.max + ')',
-                        id: key,
+                        id: "Category:"+key,
                         children: function (fetchedData) {
                             let subTree = [];
                             $.getJSON(fetchPath + key, function (elementData) {
                                 for (let keyElement in elementData) {
                                     let itemElement = elementData[keyElement];
-                                    let subLeaf = {
+                                    let subLeaf: any = {
                                         label: itemElement.name + ' (' + keyElement + ')',
                                         id: keyElement,
-                                        checkbox: true,
-                                        selected: node._values.includes(keyElement)
                                     }
+                                    if (get) {
+                                        subLeaf = {
+                                            ...subLeaf,
+                                            checkbox: true,
+                                            selected: node._values.includes(keyElement)
+                                        }
+                                    }
+
                                     subTree.push(subLeaf);
                                 }
                                 fetchedData(subTree);
@@ -66,7 +72,15 @@ RED.nodes.registerType('bsb-lan', {
         }
 
         $('#node-input-device').on('change', function () {
-            loadData((this as any).value);
+            let reqType = $('#node-input-requesttype').val();
+            let device = $('#node-input-device').val() as string;
+            loadData(device, reqType == 'GET');
+        });
+
+        $('#node-input-requesttype').on('change', function () {
+            let reqType = $('#node-input-requesttype').val();
+            let device = $('#node-input-device').val() as string;
+            loadData(device, reqType == 'GET');
         });
 
         function updateValues() {
