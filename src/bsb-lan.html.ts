@@ -11,7 +11,7 @@ RED.nodes.registerType('bsb-lan', {
     },
     inputs: 1,
     outputs: 1,
-    icon: "feed.png",
+    icon: "font-awesome/fa-fire",
     label: function () {
         return this.name || "bsb-lan";
     },
