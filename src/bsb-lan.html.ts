@@ -16,10 +16,12 @@ RED.nodes.registerType('bsb-lan', {
         return this.name || "bsb-lan";
     },
     oneditprepare: function () {
-        let node = this;
+        
+        let node = (this as any) as { _values: string[] };
+
+        node._values=([].concat(this.values ?? [])).sort();
+        
         debugger;
-        if (!node.values)
-            node.values = [];
 
         const treeList: any = $("<div>")
             .css({ width: "100%", height: "300px" })
@@ -49,7 +51,7 @@ RED.nodes.registerType('bsb-lan', {
                                         label: itemElement.name + ' (' + keyElement + ')',
                                         id: keyElement,
                                         checkbox: true,
-                                        selected: node.values.includes(keyElement)
+                                        selected: node._values.includes(keyElement)
                                     }
                                     subTree.push(subLeaf);
                                 }
@@ -68,7 +70,7 @@ RED.nodes.registerType('bsb-lan', {
         });
 
         function updateValues() {
-            const text = node.values.join(',');
+            const text = node._values.sort().join(',');
             $('#node-values').val(text);
         }
 
@@ -78,19 +80,21 @@ RED.nodes.registerType('bsb-lan', {
 
             if (item.selected != undefined) {
                 if (item.selected) {
-                    node.values.push(item.id);
+                    node._values.push(item.id);
                 } else {
-                    const index = node.values.indexOf(item.id);
+                    const index = node._values.indexOf(item.id);
                     if (index > -1) {
-                        node.values.splice(index, 1);
+                        node._values.splice(index, 1);
                     }
                 }
                 updateValues();
-                console.log(node.values);
             }
         });
     },
     oneditsave: function () {
+        let node = this as any;
 
+        node.values = node._values;
+        delete node._values;
     }
 });
