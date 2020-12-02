@@ -17,11 +17,11 @@ RED.nodes.registerType('bsb-lan', {
         return this.name || "bsb-lan";
     },
     oneditprepare: function () {
-        
+
         let node = (this as any) as { _values: string[] };
 
-        node._values=([].concat(this.values ?? [])).sort();
-        
+        node._values = ([].concat(this.values ?? [])).sort();
+
         debugger;
 
         const treeList: any = $("<div>")
@@ -30,6 +30,11 @@ RED.nodes.registerType('bsb-lan', {
         treeList.treeList({});
 
         function loadData(id: string, get: boolean) {
+            if (!get && node._values.length > 1) {
+                node._values = [node._values[0]];
+                updateValues();
+            }
+
             treeList.treeList('empty');
             let fetchPath = 'bsb-lan/' + id + '/JK=';
             $.getJSON(fetchPath + 'ALL', function (data) {
@@ -41,7 +46,7 @@ RED.nodes.registerType('bsb-lan', {
 
                     let leaf = {
                         label: item.name + ' (' + item.min + '-' + item.max + ')',
-                        id: "Category:"+key,
+                        id: "Category:" + key,
                         children: function (fetchedData) {
                             let subTree = [];
                             $.getJSON(fetchPath + key, function (elementData) {
@@ -50,16 +55,17 @@ RED.nodes.registerType('bsb-lan', {
                                     let subLeaf: any = {
                                         label: itemElement.name + ' (' + keyElement + ')',
                                         id: keyElement,
+                                        selected: node._values.includes(keyElement)
                                     }
                                     if (get) {
                                         subLeaf = {
                                             ...subLeaf,
                                             checkbox: true,
-                                            selected: node._values.includes(keyElement)
                                         }
                                     }
-
-                                    subTree.push(subLeaf);
+                                    // in the future reduce for INF messages
+                                    if (get || itemElement.readonly == 0)
+                                        subTree.push(subLeaf);
                                 }
                                 fetchedData(subTree);
                             });
@@ -93,12 +99,25 @@ RED.nodes.registerType('bsb-lan', {
         treeList.on('treelistselect', function (event, item) {
 
             if (item.selected != undefined) {
-                if (item.selected) {
-                    node._values.push(item.id);
-                } else {
-                    const index = node._values.indexOf(item.id);
-                    if (index > -1) {
-                        node._values.splice(index, 1);
+
+                let reqType = $('#node-input-requesttype').val();
+
+                if (reqType == 'GET') {
+
+                    if (item.selected) {
+                        node._values.push(item.id);
+                    } else {
+                        const index = node._values.indexOf(item.id);
+                        if (index > -1) {
+                            node._values.splice(index, 1);
+                        }
+                    }
+                }
+                else
+                {
+                    node._values=[];
+                    if (!isNaN(parseInt(item.id, 10))) {
+                        node._values.push(item.id);
                     }
                 }
                 updateValues();
