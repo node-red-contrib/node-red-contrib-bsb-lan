@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-bsb-lan",
   "version": "0.0.1",
-  "description": "",
+  "description": "A node-red node that makes the communication with BSB-Lan very easy",
   "scripts": {
     "build": "npm run tsc",
     "postbuild": "node tool/buildhtml.js",
