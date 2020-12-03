@@ -8,7 +8,8 @@ RED.nodes.registerType('bsb-lan', {
         device: { value: '', type: "bsb-lan-device" },
         name: { value: '' },
         requesttype: { value: 'GET' },
-        values: { value: [] },
+        parameters: { value: [] },
+        value: { value: '' },
     },
     inputs: 1,
     outputs: 1,
@@ -17,22 +18,29 @@ RED.nodes.registerType('bsb-lan', {
         return this.name || "bsb-lan";
     },
     oneditprepare: function () {
+        type Trequesttype = "GET" | "INF" | "SET";
 
-        let node = (this as any) as { _values: string[] };
+        let node = (this as any) as { _parameters: string[] };
 
-        node._values = ([].concat(this.values ?? [])).sort();
+        node._parameters = ([].concat(this.parameters ?? [])).sort();
 
         debugger;
 
+        const labelParameters =  $('#node-label-parameters');
+        const labelParameter =  $('#node-label-parameter');
+        const rowValue = $('#node-row-value');
+        const inputRequestType = $('#node-input-requesttype');
+        const inputDevice = $('#node-input-device');
+
         const treeList: any = $("<div>")
             .css({ width: "100%", height: "300px" })
-            .appendTo(".node-input-browse-row");
+            .appendTo("#node-row-parametertree");
         treeList.treeList({});
 
-        function loadData(id: string, get: boolean) {
-            if (!get && node._values.length > 1) {
-                node._values = [node._values[0]];
-                updateValues();
+        function loadData(id: string, requesttype: Trequesttype) {
+            if (!(requesttype == "GET") && node._parameters.length > 1) {
+                node._parameters = [node._parameters[0]];
+                updateparameters();
             }
 
             treeList.treeList('empty');
@@ -44,6 +52,9 @@ RED.nodes.registerType('bsb-lan', {
                 for (let key in data) {
                     let item = data[key];
 
+                    if (requesttype == "INF" && (item.min < 10000 || item.min >=15000))
+                        continue;
+
                     let leaf = {
                         label: item.name + ' (' + item.min + '-' + item.max + ')',
                         id: "Category:" + key,
@@ -51,20 +62,25 @@ RED.nodes.registerType('bsb-lan', {
                             let subTree = [];
                             $.getJSON(fetchPath + key, function (elementData) {
                                 for (let keyElement in elementData) {
+
+                                    let id = parseInt(keyElement,10);
+                                    if (requesttype == "INF" && (id < 10000 || id >=10005))
+                                        continue;
+
                                     let itemElement = elementData[keyElement];
                                     let subLeaf: any = {
                                         label: itemElement.name + ' (' + keyElement + ')',
                                         id: keyElement,
-                                        selected: node._values.includes(keyElement)
+                                        selected: node._parameters.includes(keyElement)
                                     }
-                                    if (get) {
+                                    if (requesttype == "GET") {
                                         subLeaf = {
                                             ...subLeaf,
                                             checkbox: true,
                                         }
                                     }
                                     // in the future reduce for INF messages
-                                    if (get || itemElement.readonly == 0)
+                                    if (requesttype == "GET" || itemElement.readonly == 0)
                                         subTree.push(subLeaf);
                                 }
                                 fetchedData(subTree);
@@ -77,57 +93,70 @@ RED.nodes.registerType('bsb-lan', {
             });
         }
 
-        $('#node-input-device').on('change', function () {
-            let reqType = $('#node-input-requesttype').val();
-            let device = $('#node-input-device').val() as string;
-            loadData(device, reqType == 'GET');
+        inputDevice.on('change', function () {
+            let reqType = inputRequestType.val() as Trequesttype;
+            let device = inputDevice.val() as string;
+            loadData(device, reqType);
         });
 
-        $('#node-input-requesttype').on('change', function () {
-            let reqType = $('#node-input-requesttype').val();
-            let device = $('#node-input-device').val() as string;
-            loadData(device, reqType == 'GET');
+        inputRequestType.on('change', function () {
+            let reqType = inputRequestType.val() as Trequesttype;
+            let device = inputDevice.val() as string;
+            if (reqType == "GET")
+            {
+                labelParameters.show();
+                labelParameter.hide();
+                rowValue.hide();
+            }
+            else
+            {
+                labelParameter.show();
+                labelParameters.hide()
+                rowValue.show();
+            }
+
+            loadData(device, reqType);
         });
 
-        function updateValues() {
-            const text = node._values.sort().join(',');
-            $('#node-values').val(text);
+        function updateparameters() {
+            const text = node._parameters.sort().join(',');
+            $('#node-parameters').val(text);
         }
 
-        updateValues();
+        updateparameters();
 
         treeList.on('treelistselect', function (event, item) {
 
             if (item.selected != undefined) {
 
-                let reqType = $('#node-input-requesttype').val();
+                let reqType = $('#node-input-requesttype').val() as Trequesttype;
 
                 if (reqType == 'GET') {
 
                     if (item.selected) {
-                        node._values.push(item.id);
+                        node._parameters.push(item.id);
                     } else {
-                        const index = node._values.indexOf(item.id);
+                        const index = node._parameters.indexOf(item.id);
                         if (index > -1) {
-                            node._values.splice(index, 1);
+                            node._parameters.splice(index, 1);
                         }
                     }
                 }
                 else
                 {
-                    node._values=[];
+                    node._parameters=[];
                     if (!isNaN(parseInt(item.id, 10))) {
-                        node._values.push(item.id);
+                        node._parameters.push(item.id);
                     }
                 }
-                updateValues();
+                updateparameters();
             }
         });
     },
     oneditsave: function () {
         let node = this as any;
 
-        node.values = node._values;
-        delete node._values;
+        node.parameters = node._parameters;
+        delete node._parameters;
     }
 });
