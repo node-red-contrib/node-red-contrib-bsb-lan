@@ -20,10 +20,12 @@
     "bsb-lan"
   ],
   "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
     "@types/node-red": "1.1.1",
-    "node-fetch": "^2.6.1",
     "nodemon-webpack-plugin": "^4.3.2",
     "replace-in-file-webpack-plugin": "^1.0.6",
     "ts-loader": "^8.0.11",
