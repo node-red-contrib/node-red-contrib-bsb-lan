@@ -9,21 +9,43 @@ export = function (RED: NodeAPI) {
         let node = this;
         let device = RED.nodes.getNode(config.device) as BSBLanDeviceNode;
 
-        this.on('input', function (msg: NodeMessageInFlow & { }) {
-           device.get('JQ='+ config.values.join(','))
-            .then((result) => { 
-                msg.payload = result; 
-                node.send(msg);
-            })
-            .catch((error)=>{
-                msg.payload = 'error '+ error;
-                node.send(msg);
-            });
-           
+        this.on('input', function (msg: NodeMessageInFlow & {}) {
+
+            let action: Promise<any>;
+
+            switch (config.requesttype) {
+                case "GET":
+                    action = device.get('JQ=' + config.parameters.join(','));
+                    break;
+                case "SET":
+                case "INF":
+                    if (config.parameters.length == 1) {
+                        action = device.post('JS',
+                            {
+                                "Parameter": config.parameters[0],
+                                "Value": config.value,
+                                "Type": config.requesttype == "INF" ? "0" : "1" // "Type" (0 = INF, 1 = SET) 
+                            }
+                        );
+                    }
+                    break;
+            }
+
+            if (action) {
+                action
+                    .then((result) => {
+                        msg.payload = result;
+                        node.send(msg);
+                    })
+                    .catch((error) => {
+                        msg.payload = 'error ' + error;
+                        node.send(msg);
+                    });
+            }
         });
 
         this.on('close', function () {
-        
+
         });
     }
 

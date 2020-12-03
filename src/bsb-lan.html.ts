@@ -24,8 +24,6 @@ RED.nodes.registerType('bsb-lan', {
 
         node._parameters = ([].concat(this.parameters ?? [])).sort();
 
-        debugger;
-
         const labelParameters =  $('#node-label-parameters');
         const labelParameter =  $('#node-label-parameter');
         const rowValue = $('#node-row-value');
@@ -37,7 +35,11 @@ RED.nodes.registerType('bsb-lan', {
             .appendTo("#node-row-parametertree");
         treeList.treeList({});
 
-        function loadData(id: string, requesttype: Trequesttype) {
+        function loadData() {
+
+            let requesttype = inputRequestType.val() as Trequesttype;
+            let id = inputDevice.val() as string;
+
             if (!(requesttype == "GET") && node._parameters.length > 1) {
                 node._parameters = [node._parameters[0]];
                 updateparameters();
@@ -79,7 +81,7 @@ RED.nodes.registerType('bsb-lan', {
                                             checkbox: true,
                                         }
                                     }
-                                    // in the future reduce for INF messages
+
                                     if (requesttype == "GET" || itemElement.readonly == 0)
                                         subTree.push(subLeaf);
                                 }
@@ -93,16 +95,11 @@ RED.nodes.registerType('bsb-lan', {
             });
         }
 
-        inputDevice.on('change', function () {
-            let reqType = inputRequestType.val() as Trequesttype;
-            let device = inputDevice.val() as string;
-            loadData(device, reqType);
-        });
+        inputDevice.on('change', function () { loadData(); });
 
         inputRequestType.on('change', function () {
-            let reqType = inputRequestType.val() as Trequesttype;
-            let device = inputDevice.val() as string;
-            if (reqType == "GET")
+            let requesttype = inputRequestType.val() as Trequesttype;
+            if (requesttype == "GET")
             {
                 labelParameters.show();
                 labelParameter.hide();
@@ -115,7 +112,7 @@ RED.nodes.registerType('bsb-lan', {
                 rowValue.show();
             }
 
-            loadData(device, reqType);
+            loadData();
         });
 
         function updateparameters() {

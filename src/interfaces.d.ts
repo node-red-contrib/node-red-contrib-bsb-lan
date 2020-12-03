@@ -15,4 +15,5 @@ export interface BSBLanDeviceNodeConfig {
 export interface BSBLanDeviceNode extends Node<Credentials>
 {
     get: (query: string) => Promise<any>
+    post:(query: string, body: object) => Promise<any>
 }
