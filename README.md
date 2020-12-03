@@ -56,9 +56,11 @@ Just add the connection settings and select what type of request you want to sen
 You can also override the configuration settings with properties that are injected
 into the incomig message.
 
-property | type | example
----------|------|--------
-
+property    | type            | example
+------------|-----------------|--------
+requesttype | GET / SET / INF | GET
+parameters  | []              | [700,710] (fetched in GET the parameter 700 & 710)
+value       | number          | 22.0 (only valid for requesttype SET / INF)
 
 ## GET
 
