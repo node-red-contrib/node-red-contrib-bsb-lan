@@ -24,7 +24,7 @@
     "node-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
+    "@types/node-fetch": "^3.0.3",
     "@types/node-red": "1.1.1",
     "nodemon-webpack-plugin": "^4.3.2",
     "replace-in-file-webpack-plugin": "^1.0.6",
