@@ -11,8 +11,5 @@
         "sourceMap": false,
         "strict": false,
         "outDir": "./nodes/",
-    },
-    "include": [
-        "src/**/*.html.ts"
-    ]
+    }
 }

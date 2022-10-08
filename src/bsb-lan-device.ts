@@ -1,7 +1,8 @@
 import { NodeAPI, Node, NodeDef } from "node-red";
 import { Credentials, BSBLanDeviceNodeConfig, BSBLanDeviceNode } from "./interfaces";
 
-import fetch from "node-fetch";
+// @ts-ignore
+const fetch = (...args)  => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 export default function (RED: NodeAPI) {
     function NodeConstructorBSBLanDevice(this: BSBLanDeviceNode, def: NodeDef & BSBLanDeviceNodeConfig) {
