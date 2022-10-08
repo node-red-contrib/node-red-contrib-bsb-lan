@@ -2,20 +2,20 @@ import { NodeAPI, Node, NodeMessageInFlow } from "node-red";
 
 import { BSBLanDeviceNode } from "./interfaces";
 
-export = function (RED: NodeAPI) {
+export default function (RED: NodeAPI) {
     function NodeBsbLan(this: Node, config: any) {
         RED.nodes.createNode(this, config);
 
-        let node = this;
-        let device = RED.nodes.getNode(config.device) as BSBLanDeviceNode;
+        const node = this;
+        const device = RED.nodes.getNode(config.device) as BSBLanDeviceNode;
 
         this.on('input', function (msg: NodeMessageInFlow & any) {
 
             let action: Promise<any>;
 
-            let cfg = { ...config};
+            const cfg = { ...config};
 
-            if (msg?.requesttype == 'GET' || msg?.requesttype == 'SET' || msg?.requesttype == 'INF')
+            if (msg?.requesttype == 'GET' || msg?.requesttype == 'SET' || msg?.requesttype == 'INF')
                 cfg.requesttype= msg.requesttype;
              
             if (msg?.parameters?.length > 0)
@@ -61,4 +61,4 @@ export = function (RED: NodeAPI) {
     }
 
     RED.nodes.registerType("bsb-lan", NodeBsbLan);
-};
+}

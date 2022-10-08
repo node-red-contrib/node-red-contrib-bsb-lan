@@ -3,7 +3,7 @@ import { Credentials, BSBLanDeviceNodeConfig, BSBLanDeviceNode } from "./interfa
 
 import fetch from "node-fetch";
 
-export = function (RED: NodeAPI) {
+export default function (RED: NodeAPI) {
     function NodeConstructorBSBLanDevice(this: BSBLanDeviceNode, def: NodeDef & BSBLanDeviceNodeConfig) {
         RED.nodes.createNode(this, def);
 
