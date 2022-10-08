@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A node-red node that makes the communication with BSB-Lan very easy",
   "scripts": {
-    "build": "npx tsc -p tsconfig.backend.json && npm run tsc",
+    "build": "npx tsc",
     "postbuild": "node tool/buildhtml.js",
     "nodered": "npm run build && node-red",
     "tsc": "tsc"
