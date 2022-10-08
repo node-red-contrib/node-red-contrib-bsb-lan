@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es2015",
-        "module": "commonjs",
+        "target": "ES2020",
+        "module": "ES6",
+        "moduleResolution": "node",
         "lib": [
             "es2015",
             "dom"
@@ -13,6 +14,6 @@
         "outDir": "./nodes/",
     },
     "include": [
-        "src/**/*.html.ts"
+        "src/**/*.ts"
     ]
 }

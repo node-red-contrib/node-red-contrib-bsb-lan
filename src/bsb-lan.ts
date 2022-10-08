@@ -2,7 +2,7 @@ import { NodeAPI, Node, NodeMessageInFlow } from "node-red";
 
 import { BSBLanDeviceNode } from "./interfaces";
 
-export = function (RED: NodeAPI) {
+export default function (RED: NodeAPI) {
     function NodeBsbLan(this: Node, config: any) {
         RED.nodes.createNode(this, config);
 
