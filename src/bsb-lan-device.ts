@@ -10,6 +10,7 @@ export = function (RED: NodeAPI) {
         let url = 'http://' + def.host + ':' + def.port + ((!this.credentials.key) ? '' : '/' + this.credentials.key);
 
         let headers = {};
+        fetch("", {insecureHTTPParser: true})
 
         if (this.credentials?.username || this.credentials?.password) {
             headers = {
@@ -18,9 +19,11 @@ export = function (RED: NodeAPI) {
         }
 
         this.get = async (query: string) => {
-            return (await fetch(url + '/' + query, {
-                headers: headers
-            })).json();
+            return (await fetch(url + '/' + query, 
+                {
+                    headers: headers, 
+                    insecureHTTPParser: true
+                })).json();
         };
 
         this.post = async (query: string, body: object) => {
@@ -31,7 +34,8 @@ export = function (RED: NodeAPI) {
                     headers: {
                         ...headers,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    insecureHTTPParser: true
                 })).json();
         }
     }
