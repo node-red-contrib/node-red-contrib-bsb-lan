@@ -1,8 +1,6 @@
 import { NodeAPI, Node, NodeDef } from "node-red";
 import { Credentials, BSBLanDeviceNodeConfig, BSBLanDeviceNode } from "./interfaces";
-
-// @ts-ignore
-const fetch = (...args)  => import('node-fetch').then(({default: fetch}) => fetch(...args));
+import axios from "axios";
 
 export default function (RED: NodeAPI) {
     function NodeConstructorBSBLanDevice(this: BSBLanDeviceNode, def: NodeDef & BSBLanDeviceNodeConfig) {
@@ -11,7 +9,6 @@ export default function (RED: NodeAPI) {
         let url = 'http://' + def.host + ':' + def.port + ((!this.credentials.key) ? '' : '/' + this.credentials.key);
 
         let headers = {};
-        fetch("", {insecureHTTPParser: true})
 
         if (this.credentials?.username || this.credentials?.password) {
             headers = {
@@ -19,25 +16,29 @@ export default function (RED: NodeAPI) {
             };
         }
 
+
         this.get = async (query: string) => {
-            return (await fetch(url + '/' + query, 
+            return (await axios( 
                 {
+                    method: 'GET',
+                    url: url + '/' + query,
                     headers: headers, 
                     insecureHTTPParser: true
-                })).json();
+                })).data;
         };
 
         this.post = async (query: string, body: object) => {
-            return (await fetch(url + '/' + query,
+            return (await axios(
                 {
                     method: "POST",
-                    body: JSON.stringify(body),
+                    url: url + '/' + query,
+                    data: JSON.stringify(body),
                     headers: {
                         ...headers,
                         'Content-Type': 'application/json'
                     },
                     insecureHTTPParser: true
-                })).json();
+                })).data;
         }
     }
 
